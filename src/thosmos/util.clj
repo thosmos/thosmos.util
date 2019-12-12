@@ -116,10 +116,21 @@
 (defn walk-modify-k-vals [m k f]
   (walk/postwalk
     (fn [form]
-      (if (and (map? form) (some #{k} (keys form)))
-        (reduce-kv (fn [acc k v] (assoc acc k (f v))) {} form)
+      (if (map? form)
+        (reduce-kv
+          (fn [acc ky v]
+            (assoc acc ky (if (= ky k) (f v) v))) {} form)
         form))
     m))
+
+(defn limit-fn
+  "Collection pagination mimicking the MySql LIMIT"
+  ([quantity coll]
+   (limit-fn quantity 0 coll))
+  ([quantity start-from coll]
+   (let [quantity   (or quantity 20)
+         start-from (or start-from 0)]
+     (take quantity (drop start-from coll)))))
 
 (defn parse-date [date-str]
   (try
