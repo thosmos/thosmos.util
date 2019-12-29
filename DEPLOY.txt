@@ -1,4 +1,0 @@
-# update the dep version in the pom.xml:
-clj -Spom
-# update the version in pom.xml manually ...
-mvn deploy

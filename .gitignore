@@ -1,3 +1,4 @@
+/build
 /target
 /classes
 /checkouts
@@ -11,3 +12,4 @@ pom.xml.asc
 .hg/
 /.idea/
 /.cpcache/
+/deploy.sh
