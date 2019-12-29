@@ -72,12 +72,16 @@
 (defn percent-prec [avg stddev]
   (* (/ stddev avg) 100))
 
-;; if it's nil, make it 0
+;; if it's nil, make it 1
 (defn inc! [val]
   (inc (or val 0)))
 
 ;; if it's nil, make it a []
 (defn conjv [coll val]
+  (println "conjv DEPRECRATED, use conjv!")
+  (conj (or coll []) val))
+
+(defn conjv! [coll val]
   (conj (or coll []) val))
 
 ;(defn ppspit [f content]
