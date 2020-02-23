@@ -6,10 +6,18 @@
        :cljs [cljs.pprint :refer [pprint]])
     #?(:clj [clojure.spec.alpha :as s])
     #?(:clj [clojure.java.io :as io])
+    [clojure.string :refer [blank? join split]]
+    #?(:cljs [goog.Uri :as uri])
+    [#?(:cljs cljs.core.async
+        :clj clojure.core.async) :refer [<! put! chan timeout close!]]
     [clojure.walk :as walk])
   #?(:clj (:import (java.nio.file FileSystems)
             (java.util Date)
             [java.time ZonedDateTime Instant ZoneId])))
+
+
+(defn if-pos? [v]
+  (if (and v (pos? v)) v))
 
 #?(:clj (defmacro functionize [macro]
           `(fn [& args#] (eval (cons '~macro args#)))))
@@ -60,6 +68,7 @@
    (defn format-instant
      ([instant] (.format (java.text.SimpleDateFormat. "yyyy-MM-dd HH:mm:ss") instant))
      ([instant format] (.format (java.text.SimpleDateFormat. format) instant))))
+
 
 #?(:clj
    (defn zoned-datetime-from-instant [ins]
@@ -237,3 +246,46 @@
                        (list form x))]
         (recur threaded (next forms)))
       x)))
+
+
+(defn dissoc-in
+  "Dissociates an entry from a nested associative structure returning a new
+  nested structure. keys is a sequence of keys. Any empty maps that result
+  will not be present in the new structure."
+  [m [k & ks :as keys]]
+  (if ks
+    (if-let [nextmap (get m k)]
+      (let [newmap (dissoc-in nextmap ks)]
+        (if (seq newmap)
+          (assoc m k newmap)
+          (dissoc m k)))
+      m)
+    (dissoc m k)))
+
+(defn <<< [f & args]
+  (let [c (chan)]
+    (apply f (concat args [(fn [x]
+                             (if #?(:cljs (or (nil? x) (undefined? x))
+                                    :clj (nil? x))
+                               (close! c)
+                               (put! c x)))]))
+    c))
+
+(defn if-pos [v]
+  (if (and v (pos? v)) v))
+
+#?(:cljs (defn parse-url
+           "Parse `url` into a hash map."
+           [url]
+           (if-not (blank? url)
+             (let [uri        (uri/parse url)
+                   query-data (.getQueryData uri)]
+               {:scheme       (keyword (.getScheme uri))
+                :server-name  (.getDomain uri)
+                :server-port  (if-pos (.getPort uri))
+                :uri          (.getPath uri)
+                :query-string (if-not (.isEmpty query-data)
+                                (str query-data))
+                :query-params :use-cljs-http}))))
+
+
