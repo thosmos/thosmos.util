@@ -24,7 +24,7 @@
 ;; the idea here is that you can load an edn file that has #load-edn tags in it which loads in other edns ... meta
 (def readers {'thosmos.datomic/load-edn       load-edn
               'thosmos.datomic/slurp-resource slurp-resource
-              'db/id                          datomic.db/id-literal
+              'db/id                          datomic.db/id_literal
               'db/fn                          datomic.function/construct
               'base64                         datomic.codec/base-64-literal})
 

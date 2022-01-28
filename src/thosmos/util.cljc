@@ -1,7 +1,7 @@
 (ns thosmos.util
   #?(:cljs (:require-macros [thosmos.util]))
   (:require
-    #?(:clj [clojure.core.rrb-vector :as fv])
+    [clojure.core.rrb-vector :as fv]
     #?(:clj  [clojure.pprint :refer [pprint]]
        :cljs [cljs.pprint :refer [pprint]])
     #?(:clj [clojure.spec.alpha :as s])
@@ -35,13 +35,18 @@
 ;;(sort-by (juxt :a :b) [{:a 1 :b 3} {:a 1 :b 2} {:a 2 :b 1}])
 ;;=> [{:a 1 :b 2} {:a 1 :b 3} {:a 2 :b 1}]
 
+(defn nest-by
+  [ks coll]
+  (let [keyfn (apply juxt ks)]
+    (reduce (fn [m x] (assoc-in m (keyfn x) x)) {} coll)))
+
 ;; Create lookup maps via a specific key
 (defn index-by [key-fn coll]
   (into {} (map (juxt key-fn identity) coll)))
 ;; #'user/index-by
-;(index-by [{:id 1 :name "foo"}
-;           {:id 2 :name "bar"}
-;           {:id 3 :name "baz"}] :id)
+;(index-by :id [{:id 1 :name "foo"}
+;               {:id 2 :name "bar"}
+;               {:id 3 :name "baz"}])
 ;;=> {1 {:name "foo", :id 1},
 ;;    2 {:name "bar", :id 2},
 ;;    3 {:name "baz", :id 3}}
@@ -79,9 +84,11 @@
        (ZonedDateTime/ofInstant
          (ZoneId/of "America/Los_Angeles")))))
 
-#?(:clj
-   (defn vec-remove [pos coll]
-     (fv/catvec (fv/subvec coll 0 pos) (fv/subvec coll (inc pos) (count coll)))))
+(defn vec-remove [pos coll]
+  (fv/catvec (fv/subvec coll 0 pos) (fv/subvec coll (inc pos) (count coll))))
+
+(defn vec-add [pos thing coll]
+  (fv/catvec (fv/subvec coll 0 pos) (fv/vector thing) (fv/subvec coll pos (count coll))))
 
 (defn round2
   "Round a double to the given precision (number of significant digits)"
@@ -215,7 +222,7 @@
 ;       (recur ret (first kvs) (second kvs) (nnext kvs))
 ;       ret))))
 
-(defmacro t->
+(defmacro ->
   "Threads the expr through the forms. Inserts x as the second item
   in the first form, making a list of it if it is a lambda or not a
   list already. If there are more forms, inserts the first form as the
@@ -231,7 +238,7 @@
         (recur threaded (next forms)))
       x)))
 
-(defmacro t->>
+(defmacro ->>
   "Threads the expr through the forms. Inserts x as the last item
   in the first form, making a list of it if it is a lambda or not a
   list already. If there are more forms, inserts the first form as the

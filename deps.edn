@@ -2,12 +2,13 @@
         {org.clojure/clojure         {:mvn/version "1.10.1"},
          org.clojure/spec.alpha      {:mvn/version "0.2.176"}
          org.clojure/core.rrb-vector {:mvn/version "0.1.1"}
-         org.clojure/core.async      {:mvn/version "0.6.532"}
-         com.datomic/datomic-free    {:mvn/version "0.9.5697"
-                                      :exclusions [org.slf4j/slf4j-nop]
-                                      :scope "provided"}}
+         org.clojure/core.async      {:mvn/version "0.6.532"}}
+
  :paths ["src"]
  :aliases {:deploy {:extra-deps {deps-deploy {:mvn/version "RELEASE"}}
                     :main-opts ["-m" "deps-deploy.deps-deploy" "deploy"
-                                "build/thosmos.util.jar"]}}}
+                                "build/thosmos.util.jar"]}
+           :dev {:extra-deps {com.datomic/datomic-free    {:mvn/version "0.9.5697"
+                                                           :exclusions [org.slf4j/slf4j-nop]
+                                                           :scope "provided"}}}}}
 

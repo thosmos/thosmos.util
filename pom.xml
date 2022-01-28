@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>thosmos</groupId>
   <artifactId>util</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
   <name>thosmos/util</name>
   <url>https://github.com/thosmos/thosmos.util</url>
   <scm>
@@ -26,6 +26,16 @@
       <version>0.2.176</version>
     </dependency>
     <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>core.rrb-vector</artifactId>
+      <version>0.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>core.async</artifactId>
+      <version>0.6.532</version>
+    </dependency>
+    <dependency>
       <groupId>com.datomic</groupId>
       <artifactId>datomic-free</artifactId>
       <version>0.9.5697</version>
@@ -36,16 +46,6 @@
         </exclusion>
       </exclusions>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.clojure</groupId>
-      <artifactId>core.rrb-vector</artifactId>
-      <version>0.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.clojure</groupId>
-      <artifactId>core.async</artifactId>
-      <version>0.6.532</version>
     </dependency>
   </dependencies>
   <build>
